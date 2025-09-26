@@ -17,10 +17,14 @@ export default function AuthForm() {
     setMessage('')
 
     try {
+      // Hardcoded for testing - replace with env var once working
+      const redirectUrl = 'https://recommendation-system-user-testing.vercel.app';
+      console.log('Redirect URL:', redirectUrl); // Debug log
+      
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/auth/callback`,
+          emailRedirectTo: `${redirectUrl}/auth/callback`,
         },
       })
 
