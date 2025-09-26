@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, appendFile, existsSync, mkdirSync } from 'fs'
+import { writeFile, appendFile, existsSync, mkdirSync, readFileSync } from 'fs'
 import { join } from 'path'
 
 interface VideoInteractionData {
@@ -182,8 +182,7 @@ export async function GET(request: NextRequest) {
         )
       }
 
-      const fs = require('fs')
-      const fileContent = fs.readFileSync(filePath, 'utf8')
+      const fileContent = readFileSync(filePath, 'utf8')
       
       return new NextResponse(fileContent, {
         status: 200,

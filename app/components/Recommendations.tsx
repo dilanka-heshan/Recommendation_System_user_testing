@@ -11,7 +11,7 @@ interface Video {
 }
 
 interface RecommendationsProps {
-  selectedCategories: string[];
+  selectedCategories?: string[];
   loading: boolean;
   videos?: Video[];
   onVideoSelect?: (videoId: string) => void;
@@ -20,7 +20,6 @@ interface RecommendationsProps {
 }
 
 export default function Recommendations({
-  selectedCategories,
   loading,
   videos = [],
   onVideoSelect,

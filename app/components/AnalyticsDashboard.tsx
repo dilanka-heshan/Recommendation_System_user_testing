@@ -2,10 +2,21 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthProvider";
 
+interface CSVStatus {
+  success: boolean;
+  message: string;
+  files: {
+    interactions_exists: boolean;
+    sessions_exists: boolean;
+    interactions_path: string;
+    sessions_path: string;
+  };
+}
+
 export default function AnalyticsDashboard() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [csvStatus, setCsvStatus] = useState<any>(null);
+  const [csvStatus, setCsvStatus] = useState<CSVStatus | null>(null);
 
   const checkCSVFiles = async () => {
     setLoading(true);

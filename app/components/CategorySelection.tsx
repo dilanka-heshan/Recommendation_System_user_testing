@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
 import { updateUserPreferences } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthProvider";
 
