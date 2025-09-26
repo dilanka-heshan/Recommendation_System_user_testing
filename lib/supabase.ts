@@ -1,5 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
+// Type definitions for user preferences
+interface UserPreferences {
+  topic?: string;
+}
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
@@ -12,7 +17,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 })
 
 // Function to create or update user in custom users table
-export const createUserRecord = async (userId: string, email: string, preferences?: any) => {
+export const createUserRecord = async (userId: string, email: string, preferences?: UserPreferences) => {
   try {
     // First check if user already exists
     const { data: existingUser, error: checkError } = await supabase
@@ -62,7 +67,7 @@ export const createUserRecord = async (userId: string, email: string, preference
 }
 
 // Function to update user preferences
-export const updateUserPreferences = async (userId: string, preferences: any) => {
+export const updateUserPreferences = async (userId: string, preferences: UserPreferences) => {
   try {
     const { data, error } = await supabase
       .from('users')

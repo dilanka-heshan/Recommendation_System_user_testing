@@ -1,7 +1,7 @@
 // Test script to verify user creation functionality
 // Run this in the browser console after authentication
 
-import { supabase, createUserRecord, updateUserPreferences, getUserPreferences } from '@/lib/supabase'
+import { supabase, updateUserPreferences, getUserPreferences } from '@/lib/supabase'
 
 // Test function to verify user creation works
 export const testUserCreation = async () => {

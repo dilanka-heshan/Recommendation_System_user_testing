@@ -124,7 +124,7 @@ export default function Home() {
           selected_videos: pickedVideos,
           email: user?.email || uniId,
         };
-        const res = await fetch("/api/ab-testing/selected-videos", {
+        await fetch("/api/ab-testing/selected-videos", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
