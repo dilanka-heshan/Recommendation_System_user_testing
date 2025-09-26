@@ -4,11 +4,9 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Input } from '@/components/ui/input'
 
-interface AuthFormProps {
-  onSuccess?: () => void
-}
+interface AuthFormProps {}
 
-export default function AuthForm({ onSuccess }: AuthFormProps) {
+export default function AuthForm({}: AuthFormProps) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -33,7 +31,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       } else {
         setMessage('Check your email for the login link!')
       }
-    } catch (error) {
+    } catch {
       setMessage('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -82,7 +80,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
       )}
 
       <div className="mt-6 text-xs text-gray-500 text-center">
-        We'll send you a secure link to sign in without a password
+        We&apos;ll send you a secure link to sign in without a password
       </div>
     </div>
   )

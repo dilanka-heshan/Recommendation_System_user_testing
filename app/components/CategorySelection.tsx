@@ -100,14 +100,12 @@ export default function CategorySelection({
             }`}
             key={category}
             onClick={() => {
-              {
-                if (selectedCategories.includes(category)) {
-                  setSelectedCategories(
-                    selectedCategories.filter((c) => c !== category)
-                  );
-                } else {
-                  setSelectedCategories([...selectedCategories, category]);
-                }
+              if (selectedCategories.includes(category)) {
+                setSelectedCategories(
+                  selectedCategories.filter((c) => c !== category)
+                );
+              } else {
+                setSelectedCategories([...selectedCategories, category]);
               }
             }}
           >
