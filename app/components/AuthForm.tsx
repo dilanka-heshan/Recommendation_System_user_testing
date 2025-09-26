@@ -4,9 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Input } from '@/components/ui/input'
 
-interface AuthFormProps {}
-
-export default function AuthForm({}: AuthFormProps) {
+export default function AuthForm() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
