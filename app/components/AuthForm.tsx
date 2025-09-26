@@ -20,7 +20,7 @@ export default function AuthForm() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${process.env.NODE_ENV === 'production' ? 'https://recommendation-system-user-testing.vercel.app' : window.location.origin}/auth/callback`,
         },
       })
 
