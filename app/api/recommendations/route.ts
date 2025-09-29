@@ -6,12 +6,6 @@ interface RecommendationRequest {
   top_k?: number
 }
 
-interface BackendVideo {
-  video_id: string
-  title: string
-  thumbnail_url: string
-}
-
 interface BackendResponse {
   user_id: string
   video_ids: string[]
@@ -23,6 +17,24 @@ interface Video {
   title: string
   thumbnail: string
   description: string
+}
+
+interface BackendRandomVideo {
+  video_id: string
+  title: string
+  description: string
+  tags: string[]
+  published_at: string
+  thumbnail_url: string
+  channel_id: string
+  embedding_id: string
+}
+
+interface BackendRandomVideoResponse {
+  status: string
+  count: number
+  videos: BackendRandomVideo[]
+  message: string
 }
 
 // Function to fetch random videos from backend service
@@ -49,7 +61,7 @@ async function fetchRandomVideosFromBackend(excludeIds: string[] = [], limit: nu
       return []
     }
 
-    const data = await response.json()
+    const data: BackendRandomVideoResponse = await response.json()
 
     if (!data || data.status !== 'success' || !data.videos || !Array.isArray(data.videos)) {
       console.log('No videos found in backend response, will use fallback')
@@ -59,13 +71,13 @@ async function fetchRandomVideosFromBackend(excludeIds: string[] = [], limit: nu
     // Filter out excluded video IDs
     let filteredVideos = data.videos
     if (excludeIds.length > 0) {
-      filteredVideos = data.videos.filter((video: any) => !excludeIds.includes(video.video_id))
+      filteredVideos = data.videos.filter((video: BackendRandomVideo) => !excludeIds.includes(video.video_id))
     }
 
     // Randomly shuffle and select the required number
     const shuffledVideos = filteredVideos.sort(() => Math.random() - 0.5).slice(0, limit)
 
-    return shuffledVideos.map((video: any) => ({
+    return shuffledVideos.map((video: BackendRandomVideo) => ({
       id: video.video_id,
       title: video.title || `Video ${video.video_id}`,
       thumbnail: video.thumbnail_url || 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
