@@ -81,11 +81,15 @@ export default function Home() {
             const recData = await recRes.json();
             setRecommendedVideos(recData.videos || []);
 
-            // Set up analytics tracking for recommended videos
-            const videoIds = recData.videos?.map((v: Video) => v.id) || [];
+            // Set up analytics tracking for ONLY the actually recommended videos (not the random ones)
+            const allVideos = recData.videos || [];
+            const recommendedCount = recData.recommended_count || 4;
+            const actuallyRecommendedVideos = allVideos.slice(0, recommendedCount);
+            const videoIds = actuallyRecommendedVideos.map((v: Video) => v.id);
             setAnalyticsRecommendedVideos(videoIds);
 
             console.log("Recommended videos loaded:", recData.videos?.length || 0);
+            console.log("Actually recommended (for analytics):", recommendedCount, videoIds);
           } else {
             console.error("Failed to fetch recommendations:", recRes.status);
             // Don't block the flow if recommendations fail

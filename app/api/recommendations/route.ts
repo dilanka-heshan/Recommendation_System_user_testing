@@ -25,35 +25,47 @@ interface Video {
   description: string
 }
 
-// Function to fetch random videos from database
-async function fetchRandomVideosFromDB(excludeIds: string[] = [], limit: number = 4): Promise<Video[]> {
+// Function to fetch random videos from backend service
+async function fetchRandomVideosFromBackend(excludeIds: string[] = [], limit: number = 4): Promise<Video[]> {
   try {
-    let query = supabase
-      .from('videos')
-      .select('video_id, title, thumbnail_url, description')
-      .limit(limit * 3) // Fetch more to have options for random selection
+    // Get the Cloud Run service URL from environment variables
+    // For local development, default to localhost:8000
+    const backendUrl = process.env.CLOUD_RUN_URL || 'https://recommendation-system-micro-service-youtube-d-837849930410.europe-west1.run.app'
+    
+    // Fetch more videos initially to allow for exclusion filtering
+    const fetchLimit = Math.min(limit + excludeIds.length + 5, 20) // Max 20 as per API limit
+    
+    console.log(`Calling random videos service at: ${backendUrl}/test/random-videos?limit=${fetchLimit}`)
 
-    // Only add the exclusion filter if there are IDs to exclude
+    const response = await fetch(`${backendUrl}/test/random-videos?limit=${fetchLimit}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      }
+    })
+
+    if (!response.ok) {
+      console.error('Error fetching random videos from backend:', response.status, response.statusText)
+      return []
+    }
+
+    const data = await response.json()
+
+    if (!data || data.status !== 'success' || !data.videos || !Array.isArray(data.videos)) {
+      console.log('No videos found in backend response, will use fallback')
+      return []
+    }
+
+    // Filter out excluded video IDs
+    let filteredVideos = data.videos
     if (excludeIds.length > 0) {
-      query = query.not('video_id', 'in', `(${excludeIds.map(id => `"${id}"`).join(',')})`)
-    }
-
-    const { data: videoData, error } = await query
-
-    if (error) {
-      console.error('Error fetching random videos from database:', error)
-      return []
-    }
-
-    if (!videoData || videoData.length === 0) {
-      console.log('No videos found in database, will use fallback')
-      return []
+      filteredVideos = data.videos.filter((video: any) => !excludeIds.includes(video.video_id))
     }
 
     // Randomly shuffle and select the required number
-    const shuffledVideos = videoData.sort(() => Math.random() - 0.5).slice(0, limit)
+    const shuffledVideos = filteredVideos.sort(() => Math.random() - 0.5).slice(0, limit)
 
-    return shuffledVideos.map(video => ({
+    return shuffledVideos.map((video: any) => ({
       id: video.video_id,
       title: video.title || `Video ${video.video_id}`,
       thumbnail: video.thumbnail_url || 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
@@ -61,7 +73,7 @@ async function fetchRandomVideosFromDB(excludeIds: string[] = [], limit: number 
     }))
 
   } catch (error) {
-    console.error('Error in fetchRandomVideosFromDB:', error)
+    console.error('Error in fetchRandomVideosFromBackend:', error)
     return []
   }
 }
@@ -146,8 +158,8 @@ export async function POST(request: NextRequest) {
     // Get video IDs that are already recommended to exclude from random selection
     const excludeIds = recommendedVideos.map(v => v.id);
 
-    // Fetch 4 random videos from database (excluding already recommended ones)
-    const randomVideosFromDB = await fetchRandomVideosFromDB(excludeIds, 4);
+    // Fetch 4 random videos from backend service (excluding already recommended ones)
+    const randomVideosFromBackend = await fetchRandomVideosFromBackend(excludeIds, 4);
 
     // If we don't have enough videos from database, we'll create fallback videos
     const fallbackVideos: Video[] = [
@@ -177,26 +189,26 @@ export async function POST(request: NextRequest) {
       }
     ];
 
-    // If we don't have enough from microservice, fill with database videos
+    // If we don't have enough from microservice, fill with backend videos
     if (recommendedVideos.length < 4) {
       const videosNeeded = 4 - recommendedVideos.length;
-      const extraVideos = randomVideosFromDB.slice(0, videosNeeded);
+      const extraVideos = randomVideosFromBackend.slice(0, videosNeeded);
       recommendedVideos = [...recommendedVideos, ...extraVideos];
     }
 
-    // For additional random videos, use remaining database videos or fallback
+    // For additional random videos, use remaining backend videos or fallback
     let additionalRandomVideos: Video[] = [];
-    if (randomVideosFromDB.length >= 4) {
-      // We have enough from database
-      additionalRandomVideos = randomVideosFromDB.slice(0, 4);
+    if (randomVideosFromBackend.length >= 4) {
+      // We have enough from backend
+      additionalRandomVideos = randomVideosFromBackend.slice(0, 4);
     } else {
-      // Use what we have from DB plus fallback
-      const remainingFromDB = randomVideosFromDB.filter(v => !recommendedVideos.some(rv => rv.id === v.id));
-      const videosNeeded = 4 - remainingFromDB.length;
+      // Use what we have from backend plus fallback
+      const remainingFromBackend = randomVideosFromBackend.filter((v: Video) => !recommendedVideos.some((rv: Video) => rv.id === v.id));
+      const videosNeeded = 4 - remainingFromBackend.length;
       const fallbackNeeded = fallbackVideos
-        .filter(v => !recommendedVideos.some(rv => rv.id === v.id) && !remainingFromDB.some(rv => rv.id === v.id))
+        .filter((v: Video) => !recommendedVideos.some((rv: Video) => rv.id === v.id) && !remainingFromBackend.some((rv: Video) => rv.id === v.id))
         .slice(0, videosNeeded);
-      additionalRandomVideos = [...remainingFromDB, ...fallbackNeeded];
+      additionalRandomVideos = [...remainingFromBackend, ...fallbackNeeded];
     }
 
     // Ensure we have exactly 4 additional videos
@@ -216,8 +228,8 @@ export async function POST(request: NextRequest) {
       additional_count: additionalRandomVideos.length,
       source_info: {
         from_microservice: recommendedVideos.length,
-        from_database: randomVideosFromDB.length,
-        from_fallback: Math.max(0, 8 - recommendedVideos.length - randomVideosFromDB.length)
+        from_backend: randomVideosFromBackend.length,
+        from_fallback: Math.max(0, 8 - recommendedVideos.length - randomVideosFromBackend.length)
       }
     })
 
