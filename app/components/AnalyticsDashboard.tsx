@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/AuthProvider";
 
 interface DatabaseStatus {
@@ -17,10 +17,45 @@ interface DatabaseStatus {
   };
 }
 
+interface VideoInteraction {
+  id: string;
+  user_id: string;
+  video_id: string | null;
+  interaction_type: 'view' | 'click' | 'select' | 'deselect';
+  is_recommended: boolean;
+  session_id: string | null;
+  timestamp: string;
+  created_at: string;
+}
+
+interface RecommendationSession {
+  id: string;
+  user_id: string;
+  session_id: string;
+  recommended_videos: string[];
+  selected_videos: string[];
+  total_recommended: number;
+  selected_recommended: number;
+  recommendation_accuracy: number;
+  timestamp: string;
+  created_at: string;
+}
+
+interface AnalyticsSummary {
+  user_id: string;
+  total_sessions: number;
+  avg_accuracy: number;
+  total_videos_recommended: number;
+  total_videos_selected: number;
+  total_interactions: number;
+  unique_videos_interacted: number;
+  date: string;
+}
+
 interface AnalyticsData {
-  interactions: any[];
-  sessions: any[];
-  summary: any[];
+  interactions: VideoInteraction[];
+  sessions: RecommendationSession[];
+  summary: AnalyticsSummary[];
 }
 
 export default function AnalyticsDashboard() {
@@ -43,7 +78,7 @@ export default function AnalyticsDashboard() {
     setLoading(false);
   };
 
-  const loadAnalyticsData = async () => {
+  const loadAnalyticsData = useCallback(async () => {
     if (!user) return;
     
     try {
@@ -61,7 +96,7 @@ export default function AnalyticsDashboard() {
     } catch (error) {
       console.error('Error loading analytics data:', error);
     }
-  };
+  }, [user]);
 
   const downloadCSV = async (fileType: 'interactions' | 'sessions') => {
     try {
@@ -90,7 +125,7 @@ export default function AnalyticsDashboard() {
     if (user) {
       loadAnalyticsData();
     }
-  }, [user]);
+  }, [user, loadAnalyticsData]);
 
   if (!user) {
     return (
@@ -182,7 +217,7 @@ export default function AnalyticsDashboard() {
               <h3 className="text-lg font-semibold text-gray-800 mb-4">📊 Recent Sessions</h3>
               {analyticsData.sessions.length > 0 ? (
                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {analyticsData.sessions.slice(0, 5).map((session: any, index: number) => (
+                  {analyticsData.sessions.slice(0, 5).map((session: RecommendationSession, index: number) => (
                     <div key={session.id} className="p-3 bg-gray-50 rounded border">
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-sm font-medium">Session {index + 1}</span>
@@ -208,7 +243,7 @@ export default function AnalyticsDashboard() {
               <h3 className="text-lg font-semibold text-gray-800 mb-4">🔄 Recent Interactions</h3>
               {analyticsData.interactions.length > 0 ? (
                 <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {analyticsData.interactions.slice(0, 10).map((interaction: any) => (
+                  {analyticsData.interactions.slice(0, 10).map((interaction: VideoInteraction) => (
                     <div key={interaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded text-sm">
                       <div className="flex items-center space-x-2">
                         <span className={`px-2 py-1 rounded text-xs ${
