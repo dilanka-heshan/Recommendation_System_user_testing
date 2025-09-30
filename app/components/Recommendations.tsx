@@ -228,22 +228,7 @@ export default function Recommendations({
           </div>
         </div>
       )}
-        {/* Sticky Next Button */}
-        {videos.length > 0 && (
-          <div className="fixed bottom-0 left-0 w-full flex justify-center z-50 pointer-events-none">
-            <button
-              className="pointer-events-auto bg-blue-600 text-white font-bold px-8 py-3 rounded-full shadow-lg mb-6 transition-all duration-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              style={{ maxWidth: '320px' }}
-              disabled={selectedVideos.length === 0}
-              onClick={() => {
-                // You can replace this with your navigation logic
-                alert('Next step!');
-              }}
-            >
-              Next
-            </button>
-          </div>
-        )}
+
     </div>
   );
 }

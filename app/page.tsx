@@ -195,7 +195,7 @@ export default function Home() {
         {step == 3 && <ThankYou uniId={uniId} setUniId={setUniId} />}
         <button
           onClick={handleNext}
-          className=" mb-3 w-[200px] outline-2 outline-green-400 rounded-full py-2 font-semibold transition-all duration-300 hover:bg-green-400 hover:text-white cursor-pointer"
+          className="relative z-10 mb-6 w-[200px] bg-green-500 text-white outline-2 outline-green-400 rounded-full py-3 font-bold text-lg shadow-lg transition-all duration-300 hover:bg-green-600 hover:shadow-xl hover:scale-105 cursor-pointer"
         >
           {step == 3 ? "Submit" : "Next"}
         </button>
