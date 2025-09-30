@@ -84,10 +84,47 @@ export default function Recommendations({
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-8 items-center px-4">
-      <h2 className="text-3xl font-bold text-center font-playfair">
-        Recommended Videos for You
-      </h2>
+    <div className="w-full h-full flex flex-col gap-6 items-center px-4">
+      <div className="text-center space-y-4 w-full max-w-4xl">
+        <h2 className="text-3xl font-bold text-center font-playfair">
+          Recommended Videos for You
+        </h2>
+        
+        {/* Guidelines Section */}
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-purple-800 mb-3">🎯 How to Select Videos</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                <span className="text-purple-700"><strong>Click videos</strong> you find interesting</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                <span className="text-purple-700"><strong>Selected videos</strong> get a green border & checkmark</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+                <span className="text-purple-700"><strong>Click again</strong> to deselect</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 bg-orange-400 rounded-full"></span>
+                <span className="text-purple-700"><strong>Your interactions</strong> are tracked for research</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                <span className="text-purple-700"><strong>Select multiple</strong> to compare preferences</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 bg-teal-400 rounded-full"></span>
+                <span className="text-purple-700"><strong>Hover for preview</strong> and better view</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {videos.length === 0 ? (
         <div className="text-center py-8">
@@ -149,11 +186,46 @@ export default function Recommendations({
         </div>
       )}
 
-      {videos.length > 0 && selectedVideos.length > 0 && (
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            {selectedVideos.length} video{selectedVideos.length !== 1 ? 's' : ''} selected
-          </p>
+      {/* Selection Summary */}
+      {videos.length > 0 && (
+        <div className="w-full max-w-4xl">
+          <div className={`text-center p-4 rounded-lg border transition-all duration-300 ${
+            selectedVideos.length > 0 
+              ? 'bg-green-50 border-green-200' 
+              : 'bg-gray-50 border-gray-200'
+          }`}>
+            <div className="flex items-center justify-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-lg">📊</span>
+                <span className="font-semibold text-gray-700">
+                  {selectedVideos.length} of {videos.length} videos selected
+                </span>
+              </div>
+              {selectedVideos.length > 0 && (
+                <div className="flex items-center space-x-2">
+                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-green-400 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(selectedVideos.length / videos.length) * 100}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm text-green-600 font-medium">
+                    {Math.round((selectedVideos.length / videos.length) * 100)}%
+                  </span>
+                </div>
+              )}
+            </div>
+            {selectedVideos.length === 0 && (
+              <p className="text-sm text-gray-500 mt-2">
+                💡 Start by clicking on videos that interest you
+              </p>
+            )}
+            {selectedVideos.length > 0 && (
+              <p className="text-sm text-green-600 mt-2">
+                ✨ Great selection! Your preferences are being recorded for research
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>

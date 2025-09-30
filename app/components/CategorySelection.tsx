@@ -9,28 +9,29 @@ interface CategorySelectionProps {
 }
 
 const youtube_categories = [
+  // --- Core AI & ML Domains ---
+  "machine_learning",
+  "deep_learning",
+  "supervised_learning",
+  "unsupervised_learning",
+  "reinforcement_learning",
+  "neural_networks",
+  "generative_ai",
+  "foundation_models",
+  "large_language_models",
+  "small_language_models",
+  "natural_language_processing",
+  "computer_vision",
+  "neuroai",
+
   // --- Applied AI Subdomains ---
+  "ai_in_biology",
   "ai_in_healthcare",
-  "ai_in_finance_and_banking",
-  "ai_in_education_and_learning",
-  "ai_in_agriculture_and_farming",
-  "ai_in_manufacturing_and_industry",
-  "ai_in_transportation_and_logistics",
-  "ai_in_autonomous_vehicles",
-  "ai_in_robotics_and_automation",
-  "ai_in_smart_cities_and_iot",
-  "ai_in_energy_and_environment",
-  "ai_in_climate_and_sustainability",
-  "ai_in_cybersecurity",
-  "ai_in_retail_and_ecommerce",
-  "ai_in_media_and_entertainment",
-  "ai_in_gaming_and_simulation",
-  "ai_in_law_and_governance",
-  "ai_in_defense_and_security",
-  "ai_in_human_resources_and_recruitment",
-  "ai_in_social_good_and_nonprofits",
-  "ai_in_space_and_astronomy",
+  "ai_in_security",
+  "ai_for_climate",
+  "ai_in_art",
 ];
+
 
 
 export default function CategorySelection({
@@ -63,8 +64,32 @@ export default function CategorySelection({
     return () => clearTimeout(timeoutId);
   }, [selectedCategories, user]);
   return (
-    <div className=" w-full h-full flex flex-col gap-12 items-center">
-      <h1 className=" text-3xl font-bold">Pick Some!</h1>
+    <div className=" w-full h-full flex flex-col gap-8 items-center">
+      <div className="text-center space-y-4">
+        <h1 className=" text-3xl font-bold">Pick Your Interests!</h1>
+        
+        {/* Guidelines Section */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
+          <h2 className="text-lg font-semibold text-blue-800 mb-2">📋 How to Select Your Preferences</h2>
+          <div className="text-blue-700 text-sm space-y-2">
+            <p>• <strong>Click on categories</strong> that interest you - they'll turn green when selected</p>
+            <p>• <strong>Select multiple topics</strong> to get diverse recommendations</p>
+            <p>• <strong>Add custom categories</strong> using the input field below</p>
+            <p>• <strong>Your preferences are saved automatically</strong> for better recommendations</p>
+          </div>
+        </div>
+        
+        {/* Progress Indicator */}
+        {selectedCategories.length > 0 && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 max-w-md mx-auto">
+            <p className="text-green-800 font-medium">
+              ✅ {selectedCategories.length} categories selected
+            </p>
+            <p className="text-green-600 text-sm">Great! You'll get personalized recommendations</p>
+          </div>
+        )}
+      </div>
+      
       <div className=" flex flex-wrap justify-center gap-4 max-w-[500px] mx-auto overflow-scroll">
         {categories.map((category) => (
           <div
@@ -88,21 +113,28 @@ export default function CategorySelection({
           </div>
         ))}
       </div>
-      <div className=" border-b-1 border-zinc pb-2 max-w-[200px]">
-        <input
-          type="text"
-          placeholder="Add your own.."
-          className=" text-center rounded-full font-semibold focus:outline-none focus:ring-0 focus:border-transparent"
-          value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              setCategories([...categories, newCategory]);
-              setSelectedCategories([...selectedCategories, newCategory]);
-              setNewCategory("");
-            }
-          }}
-        />
+      <div className="text-center space-y-2">
+        <p className="text-sm text-gray-600 font-medium">Don't see your topic? Add it below:</p>
+        <div className=" border-b-1 border-zinc pb-2 max-w-[200px] mx-auto">
+          <input
+            type="text"
+            placeholder="Type & press Enter"
+            className=" text-center rounded-full font-semibold focus:outline-none focus:ring-0 focus:border-transparent w-full"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && newCategory.trim()) {
+                const trimmedCategory = newCategory.trim();
+                if (!categories.includes(trimmedCategory)) {
+                  setCategories([...categories, trimmedCategory]);
+                  setSelectedCategories([...selectedCategories, trimmedCategory]);
+                }
+                setNewCategory("");
+              }
+            }}
+          />
+        </div>
+        <p className="text-xs text-gray-500">💡 Custom categories help improve your recommendations</p>
       </div>
     </div>
   );
