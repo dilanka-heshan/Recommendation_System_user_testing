@@ -72,7 +72,7 @@ export default function CategorySelection({
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
           <h2 className="text-lg font-semibold text-blue-800 mb-2">📋 How to Select Your Preferences</h2>
           <div className="text-blue-700 text-sm space-y-2">
-            <p>• <strong>Click on categories</strong> that interest you - they'll turn green when selected</p>
+            <p>• <strong>Click on categories</strong> that interest you - they&apos;ll turn green when selected</p>
             <p>• <strong>Select multiple topics</strong> to get diverse recommendations</p>
             <p>• <strong>Add custom categories</strong> using the input field below</p>
             <p>• <strong>Your preferences are saved automatically</strong> for better recommendations</p>
@@ -85,7 +85,7 @@ export default function CategorySelection({
             <p className="text-green-800 font-medium">
               ✅ {selectedCategories.length} categories selected
             </p>
-            <p className="text-green-600 text-sm">Great! You'll get personalized recommendations</p>
+            <p className="text-green-600 text-sm">Great! You&apos;ll get personalized recommendations</p>
           </div>
         )}
       </div>
@@ -114,7 +114,7 @@ export default function CategorySelection({
         ))}
       </div>
       <div className="text-center space-y-2">
-        <p className="text-sm text-gray-600 font-medium">Don't see your topic? Add it below:</p>
+        <p className="text-sm text-gray-600 font-medium">Don&apos;t see your topic? Add it below:</p>
         <div className=" border-b-1 border-zinc pb-2 max-w-[200px] mx-auto">
           <input
             type="text"
